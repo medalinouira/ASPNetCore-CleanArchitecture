@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ASPNetCore.CleanArchitecture.Data\ASPNetCore.CleanArchitecture.Data.csproj">
+      <Name>ASPNetCore.CleanArchitecture.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ASPNetCore.CleanArchitecture.Models\ASPNetCore.CleanArchitecture.Models.csproj">
+      <Name>ASPNetCore.CleanArchitecture.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ASPNetCore.CleanArchitecture.Interfaces\ASPNetCore.CleanArchitecture.Interfaces.csproj">
+      <Name>ASPNetCore.CleanArchitecture.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  
+</Project>

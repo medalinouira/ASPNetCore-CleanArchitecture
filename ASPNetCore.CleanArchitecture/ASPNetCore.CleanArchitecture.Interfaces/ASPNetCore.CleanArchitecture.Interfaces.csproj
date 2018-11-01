@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ASPNetCore.CleanArchitecture.Models\ASPNetCore.CleanArchitecture.Models.csproj">
+      <Name>ASPNetCore.CleanArchitecture.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
