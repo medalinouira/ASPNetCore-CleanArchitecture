@@ -3,3 +3,4 @@ Clean Architecture project of an ASP.NET Core WEB API provided by my Visual Stud
 
 
 The Automapper config object is created , but its not initialized to AutoMapper and ServiceCollection. Fixed it.
+Kaan Karataç
