@@ -8,13 +8,13 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-using ASPNetCore.CleanArchitecture.Data.Database;
-using ASPNetCore.CleanArchitecture.Domain.Services;
-using ASPNetCore.CleanArchitecture.Interfaces.IServices;
-using ASPNetCore.CleanArchitecture.Interfaces.IRepositories;
-using ASPNetCore.CleanArchitecture.Infrastructure.Repositories;
+using CleanArchitecture1.Data.Database;
+using CleanArchitecture1.Domain.Services;
+using CleanArchitecture1.Interfaces.IServices;
+using CleanArchitecture1.Interfaces.IRepositories;
+using CleanArchitecture1.Infrastructure.Repositories;
 
-namespace ASPNetCore.CleanArchitecture.Setup
+namespace CleanArchitecture1.Setup
 {
     public static class StartupExtension
     {
@@ -31,10 +31,13 @@ namespace ASPNetCore.CleanArchitecture.Setup
             #endregion
 
             #region AutoMapper
-            Mapper.Initialize(cfg =>
+            var mappingConfig = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfiles("ASPNetCore.CleanArchitecture" + ".Api", "ASPNetCore.CleanArchitecture" + ".Infrastructure");
+                cfg.AddProfiles("CleanArchitecture1" + ".Api", "CleanArchitecture1" + ".Infrastructure");
             });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            _iServiceCollection.AddSingleton(mapper);
             #endregion
 
             #region Repositories
