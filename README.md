@@ -1,9 +1,8 @@
 **AspNetCore.Templates** is a RESTFul ASP.NET Core 3 API project with a clean architecture using best practices and many useful libraries.
-
-**ASP.NET Core 3 API Clean Architecture**
-<br/><br/>
 **Link**<br/>
 https://marketplace.visualstudio.com/items?itemName=mohamedalinouira.AspNetCoreTemplates
+<br/><br/>
+**ASP.NET Core 3 API Clean Architecture**
 <br/><br/>
 **Demo**<br/>
 https://aspnetcore-templates-cleanarchitecture.azurewebsites.net/index.html
