@@ -4,10 +4,11 @@
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
 using System;
-using System.Collections.Generic;
+using ASPNetCore.CleanArchitecture.Models.Attributs;
 
 namespace ASPNetCore.CleanArchitecture.Models
 {
+    [EntityName(Entity: "Customer")]
     public class CustomerModel
     {
         /// <summary>

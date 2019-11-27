@@ -3,48 +3,54 @@
 /// https://github.com/medalinouira
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
+using ASPNetCore.CleanArchitecture.Models;
 using System;
 using System.Linq;
+using ASPNetCore.CleanArchitecture.Api.Filters;
+using ASPNetCore.CleanArchitecture.Api.Extensions;
+using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
-using ASPNetCore.CleanArchitecture.Models;
-using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 
 namespace ASPNetCore.CleanArchitecture.Api.Controllers
 {
     [Route("api/[controller]")]
     public class CustomersController : Controller
     {
+        #region Fields
         private readonly ICustomerService _iCustomerService;
         private readonly ILogger<CustomersController> _iLogger;
+        #endregion
 
+        #region Constructor
         public CustomersController(ICustomerService _iCustomerService,
                                    ILogger<CustomersController> _iLogger)
         {
             this._iLogger = _iLogger;
             this._iCustomerService = _iCustomerService;
         }
+        #endregion
 
+        #region Actions
         /// <summary>
         /// Get all customers.
         /// </summary>
         // GET: api/customers
         [HttpGet]
         [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(500)]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAll()
         {
-            try
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            var customers = await _iCustomerService.GetAllAsync();
+            if (customers != null && customers.Count() > 0)
             {
-                return Ok(_iCustomerService.GetAll());
+                return Ok(customers);
             }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while getting customers", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return NoContent();
         }
 
         /// <summary>
@@ -53,58 +59,39 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         // GET api/customers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            try
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            var customer = await _iCustomerService.GetByIdAsync(id);
+            if (customer == null)
             {
-                var customer = await _iCustomerService.GetById(id);
-                if (customer == null)
-                {
-                    _iLogger.LogInformation($"Customer with {id} wasn't found");
-                    return NotFound();
-                }
-                return Ok(customer);
+                _iLogger.LogInformation($"Customer with {id} wasn't found");
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while getting customer with id {id}", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return Ok(customer);
         }
 
         /// <summary>
         /// Add a new customer.
         /// </summary>
         // POST api/customers
-        [HttpPost(Name = "AddCustomer")]
+        [HttpPost]
+        [ValidateModelSate]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(500)]    
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Post([FromBody]CustomerModel customerModel)
         {
-            try
-            {
-                if (customerModel == null)
-                {
-                    return BadRequest();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
+            var createdCustomer = await _iCustomerService.AddAsync(customerModel);
 
-                await _iCustomerService.Insert(customerModel);
-
-                return CreatedAtRoute("AddCustomer", customerModel);
-            }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while adding a new customer", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return CreatedAtAction(nameof(GetById), new { id = createdCustomer.Id }, createdCustomer.Id);
         }
 
         /// <summary>
@@ -112,71 +99,52 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         /// </summary>
         // PUT api/customers/386a8d02-c13a-4f98-8edd-27ece9ee0472
         [HttpPut("{id}")]
+        [ValidateModelSate]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Put(Guid id, [FromBody]CustomerModel customerModel)
         {
-            try
-            {
-                if (customerModel == null)
-                {
-                    return BadRequest();
-                }
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
-                var customer = await _iCustomerService.GetById(id);
-                if (customer != null)
-                {
-                    return NotFound();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                await _iCustomerService.Update(customer);
-
-                return NoContent();
-            }
-            catch (Exception ex)
+            if (!(await CustomerExists(id)))
             {
-                _iLogger.LogCritical($"Exception while puting a customer", ex);
-                return StatusCode(500, "A problem happened while handling your request");
+                return NotFound();
             }
+
+            _iCustomerService.Update(customerModel);
+
+            return NoContent();
         }
-        
+
         /// <summary>
         /// Delete customer by id.
         /// </summary>
         // DELETE api/customers/386a8d02-c13a-4f98-8edd-27ece9ee0472
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            try
-            {
-                var customer = await _iCustomerService.GetById(id);
-                if (customer != null)
-                {
-                    return NotFound();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                await _iCustomerService.Delete(customer);
-
-                return NoContent();
-            }
-            catch (Exception ex)
+            if (!(await CustomerExists(id)))
             {
-                _iLogger.LogCritical($"Exception while deleting a customer", ex);
-                return StatusCode(500, "A problem happened while handling your request");
+                return NotFound();
             }
+
+            _iCustomerService.DeleteById(id);
+
+            return NoContent();
         }
 
-        private bool CustomerExists(Guid id)
+        private async Task<bool> CustomerExists(Guid id)
         {
-            return _iCustomerService.GetAll().Any(a => a.Id.Equals(id));
+            return (await _iCustomerService.GetAllAsync()).Any(a => a.Id.Equals(id));
         }
+        #endregion
     }
 }

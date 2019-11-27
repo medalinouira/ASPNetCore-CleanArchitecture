@@ -7,7 +7,7 @@ using ASPNetCore.CleanArchitecture.Models;
 
 namespace ASPNetCore.CleanArchitecture.Interfaces.IServices
 {
-    public interface IProductService : IGenericService<ProductModel>
+    public interface IProductService : IBaseService<ProductModel>, IInjectable
     {
     }
 }

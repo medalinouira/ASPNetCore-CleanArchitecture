@@ -10,15 +10,20 @@ namespace ASPNetCore.CleanArchitecture.Data.Database
 {
     public class BaseDbContext : DbContext
     {
+        #region Constructor
         public BaseDbContext(DbContextOptions options) : base(options)
         {
-            
-        }
 
+        }
+        #endregion
+
+        #region DbSets
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        #endregion
 
+        #region Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,5 +42,6 @@ namespace ASPNetCore.CleanArchitecture.Data.Database
                 .WithMany(op => op.OrderProducts)
                 .HasForeignKey(op => op.OrderId);
         }
+        #endregion
     }
 }

@@ -7,7 +7,7 @@ using ASPNetCore.CleanArchitecture.Models;
 
 namespace ASPNetCore.CleanArchitecture.Interfaces.IServices
 {
-    public interface IOrderService : IGenericService<OrderModel>
+    public interface IOrderService : IBaseService<OrderModel>, IInjectable
     {
     }
 }

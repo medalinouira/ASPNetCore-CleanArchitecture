@@ -7,7 +7,7 @@ using ASPNetCore.CleanArchitecture.Models;
 
 namespace ASPNetCore.CleanArchitecture.Interfaces.IRepositories
 {
-    public interface IOrderRepository : IGenericRepository<OrderModel>
+    public interface IOrderRepository : IBaseRepository<OrderModel>, IInjectable
     {
     }
 }

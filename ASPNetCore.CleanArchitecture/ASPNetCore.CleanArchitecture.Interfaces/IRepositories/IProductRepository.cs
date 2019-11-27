@@ -7,7 +7,7 @@ using ASPNetCore.CleanArchitecture.Models;
 
 namespace ASPNetCore.CleanArchitecture.Interfaces.IRepositories
 {
-    public interface IProductRepository : IGenericRepository<ProductModel>
+    public interface IProductRepository : IBaseRepository<ProductModel>, IInjectable
     {
     }
 }

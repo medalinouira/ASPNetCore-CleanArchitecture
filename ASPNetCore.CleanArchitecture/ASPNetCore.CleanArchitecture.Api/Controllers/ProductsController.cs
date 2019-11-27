@@ -4,47 +4,53 @@
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
 using System;
+using ASPNetCore.CleanArchitecture.Models;
 using System.Linq;
+using ASPNetCore.CleanArchitecture.Api.Filters;
+using ASPNetCore.CleanArchitecture.Api.Extensions;
+using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using ASPNetCore.CleanArchitecture.Models;
-using ASPNetCore.CleanArchitecture.Interfaces.IServices;
-
-namespace ASPNetCore.CleanArchitecture.Api.Controllers
+namespace Swagger.ASPNetCore.CleanArchitecture.Api.Controllers
 {
     [Route("api/[controller]")]
     public class ProductsController : Controller
     {
+        #region Fields
         private readonly IProductService _iProductService;
         private readonly ILogger<ProductsController> _iLogger;
+        #endregion
 
+        #region Constructor
         public ProductsController(IProductService _iProductService,
                                   ILogger<ProductsController> _iLogger)
         {
             this._iLogger = _iLogger;
             this._iProductService = _iProductService;
         }
+        #endregion
 
+        #region Actions
         /// <summary>
         /// Get all products.
         /// </summary>
         // GET: api/products
         [HttpGet]
         [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(500)]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAll()
         {
-            try
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            var products = await _iProductService.GetAllAsync();
+            if (products != null && products.Count() > 0)
             {
-                return Ok(_iProductService.GetAll());
+                return Ok(products);
             }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while getting products", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return NoContent();
         }
 
         /// <summary>
@@ -53,58 +59,39 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         // GET api/products
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            try
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            var product = await _iProductService.GetByIdAsync(id);
+            if (product == null)
             {
-                var product = await _iProductService.GetById(id);
-                if (product == null)
-                {
-                    _iLogger.LogInformation($"Product with {id} wasn't found");
-                    return NotFound();
-                }
-                return Ok(product);
+                _iLogger.LogInformation($"Product with {id} wasn't found");
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while getting product with id {id}", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return Ok(product);
         }
 
         /// <summary>
         /// Add a new product.
         /// </summary>
         // POST api/products
-        [HttpPost(Name = "AddProduct")]
+        [HttpPost]
+        [ValidateModelSate]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Post([FromBody]ProductModel productModel)
         {
-            try
-            {
-                if (productModel == null)
-                {
-                    return BadRequest();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
+            var createdProduct = await _iProductService.AddAsync(productModel);
 
-                await _iProductService.Insert(productModel);
-
-                return CreatedAtRoute("AddProduct", productModel);
-            }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while adding a new product", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct.Id);
         }
 
         /// <summary>
@@ -112,37 +99,23 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         /// </summary>
         // PUT api/products/386a8d02-c13a-4f98-8edd-27ece9ee0472
         [HttpPut("{id}")]
+        [ValidateModelSate]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Put(Guid id, [FromBody]ProductModel productModel)
         {
-            try
-            {
-                if (productModel == null)
-                {
-                    return BadRequest();
-                }
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
-                var product = await _iProductService.GetById(id);
-                if (product != null)
-                {
-                    return NotFound();
-                };
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                await _iProductService.Update(product);
-
-                return NoContent();
-            }
-            catch (Exception ex)
+            if (!(await ProductExists(id)))
             {
-                _iLogger.LogCritical($"Exception while puting a Product", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+                return NotFound();
+            };
+
+            _iProductService.Update(productModel);
+
+            return NoContent();
         }
 
         /// <summary>
@@ -151,32 +124,27 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         // DELETE api/products/386a8d02-c13a-4f98-8edd-27ece9ee0472
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            try
-            {
-                var product = await _iProductService.GetById(id);
-                if (product != null)
-                {
-                    return NotFound();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                await _iProductService.Delete(product);
-
-                return NoContent();
-            }
-            catch (Exception ex)
+            if (!(await ProductExists(id)))
             {
-                _iLogger.LogCritical($"Exception while deleting a product", ex);
-                return StatusCode(500, "A problem happened while handling your request");
+                return NotFound();
             }
+
+            _iProductService.DeleteById(id);
+
+            return NoContent();
         }
 
-        private bool ProductExists(Guid id)
+        private async Task<bool> ProductExists(Guid id)
         {
-            return _iProductService.GetAll().Any(a => a.Id.Equals(id));
+            return (await _iProductService.GetAllAsync()).Any(a => a.Id.Equals(id));
         }
+        #endregion
     }
 }

@@ -13,11 +13,14 @@ namespace ASPNetCore.CleanArchitecture.Data.Database
 {
     public class FakeDbContext : BaseDbContext
     {
+        #region Constructor
         public FakeDbContext(DbContextOptions options) : base(options)
         {
             SeedFakeData();
         }
+        #endregion
 
+        #region Methods
         public void SeedFakeData()
         {
             //Mock Products
@@ -70,5 +73,6 @@ namespace ASPNetCore.CleanArchitecture.Data.Database
             Customers.Add(new Customer { Id = Guid.NewGuid(), FirstName = "FirstName 4", LastName = "LastName 4", Email = "email4@email.com", Company = "Company 4", Phone = "09 XX XX XX XX", Orders = new List<Order>() { Orders.ToList()[6], Orders.ToList()[7] } });
             SaveChanges();
         }
+        #endregion
     }
 }

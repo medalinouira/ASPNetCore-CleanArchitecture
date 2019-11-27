@@ -3,20 +3,17 @@
 /// https://github.com/medalinouira
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
+using ASPNetCore.CleanArchitecture.Setup;
 using AutoMapper;
-using NLog.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
+using ASPNetCore.CleanArchitecture.Api.Extensions;
+using System.Globalization;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
-
-using ASPNetCore.CleanArchitecture.Api.Extensions;
-
-using ASPNetCore.CleanArchitecture.Setup;
 
 namespace ASPNetCore.CleanArchitecture.Api
 {
@@ -32,33 +29,27 @@ namespace ASPNetCore.CleanArchitecture.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddOptions();
+            services.AddLocalization();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                  .AddJsonOptions(o =>
-                  {
-                      if (o.SerializerSettings.ContractResolver != null)
-                      {
-                          var castedResolver = o.SerializerSettings.ContractResolver as DefaultContractResolver;
-                          castedResolver.NamingStrategy = null;
-                      }
-                  }).AddMvcOptions(o => {
-                      o.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-                  });
+            var configuration = new MapperConfiguration(cfg =>
+                cfg.AddMaps(new[] {
+                    "ASPNetCore.CleanArchitecture.API",
+                    "ASPNetCore.CleanArchitecture.Infrastructure"
+                })
+            );
+            IMapper mapper = configuration.CreateMapper();
+            services.AddSingleton(mapper);
 
-            services.AddAutoMapper();
-
-            services.AddSwagger();
-            services.AddDependencies();
+            services.AddAppMVC();
+            services.AddAppLogging();
+            services.AddAppSwaggerGen();
+            services.AddAppDependencies();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
-            loggerFactory.AddNLog();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -68,25 +59,37 @@ namespace ASPNetCore.CleanArchitecture.Api
                 app.UseHsts();
             }
 
-            app.UseMySwaggerConfig();
+            app.UseAppExceptionsMiddleware();
+            app.UseRequestLocalization(BuildLocalizationOptions());
 
-            app.UseHttpsRedirection();
-            app.UseMvc();
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-
-            app.UseStatusCodePages();
-            app.UseMvc();
-
-            app.UseHttpsRedirection();
-            app.UseMySwaggerConfig();
+            app.UseAppSwagger();
             app.UseStaticFiles();
+            app.UseStatusCodePages();
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+        private RequestLocalizationOptions BuildLocalizationOptions()
+        {
+            var supportedCultures = new List<CultureInfo>
+            {
+                new CultureInfo("fr-FR"),
+                new CultureInfo("en-US")
+            };
+
+            var options = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("fr-FR"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            };
+
+            return options;
         }
     }
 }

@@ -4,18 +4,42 @@
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace ASPNetCore.CleanArchitecture.Interfaces.IRepositories
 {
-    public interface IGenericRepository<TEntity> where TEntity : class
+    public interface IGenericRepository<TModel, TEntity> where TModel : class where TEntity : class
     {
-        Task DeleteById(Guid id);
-        IQueryable<TEntity> GetAll();
-        Task<TEntity> GetById(Guid id);
-        Task Insert(TEntity entityToInsert);
-        Task Update(TEntity entityToUpdate);
-        Task Delete(TEntity entityToDelete);
+        #region Get
+        TModel GetById(object id);
+        Task<TModel> GetByIdAsync(object id);
+        IList<TModel> GetAll();
+        Task<IList<TModel>> GetAllAsync();
+        #endregion
+
+        #region Add
+        TModel Add(TModel modelToAdd);
+        Task<TModel> AddAsync(TModel modelToAdd);
+        void AddRange(IList<TModel> modelsToAdd);
+        Task AddRangeAsync(IList<TModel> modelsToAdd);
+        #endregion
+
+        #region Update
+        void Update(TModel modelToUpdate);
+        void UpdateRange(IList<TModel> modelsToUpdate);
+        #endregion
+
+        #region Delete
+        void DeleteById(object id);
+        void Delete(TModel modelToDelete);
+        void DeleteRange(IList<TModel> modelsToDelete);
+        #endregion
+
+        #region Global
+        Task<int> SaveChangesAsync();
+        bool Exist(Expression<Func<TEntity, bool>> predicate);
+        #endregion
     }
 }

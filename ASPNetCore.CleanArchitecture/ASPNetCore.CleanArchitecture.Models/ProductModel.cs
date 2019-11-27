@@ -4,9 +4,11 @@
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
 using System;
+using ASPNetCore.CleanArchitecture.Models.Attributs;
 
 namespace ASPNetCore.CleanArchitecture.Models
 {
+    [EntityName(Entity: "Product")]
     public class ProductModel
     {
         /// <summary>

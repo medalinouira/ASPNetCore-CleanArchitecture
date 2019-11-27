@@ -4,47 +4,53 @@
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
 using System;
+using ASPNetCore.CleanArchitecture.Models;
 using System.Linq;
+using ASPNetCore.CleanArchitecture.Api.Filters;
+using ASPNetCore.CleanArchitecture.Api.Extensions;
+using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
-using ASPNetCore.CleanArchitecture.Models;
-using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 
 namespace ASPNetCore.CleanArchitecture.Api.Controllers
 {
     [Route("api/[controller]")]
     public class OrdersController : Controller
     {
+        #region Fields
         private readonly IOrderService _iOrderService;
         private readonly ILogger<OrdersController> _iLogger;
+        #endregion
 
+        #region Constructor
         public OrdersController(IOrderService _iOrderService,
                                ILogger<OrdersController> _iLogger)
         {
             this._iLogger = _iLogger;
             this._iOrderService = _iOrderService;
         }
+        #endregion
 
+        #region Actions
         /// <summary>
         /// Get all orders.
         /// </summary>
         // GET: api/orders
         [HttpGet]
         [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(500)]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAll()
         {
-            try
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            var orders = await _iOrderService.GetAllAsync();
+            if (orders != null && orders.Count() > 0)
             {
-                return Ok(_iOrderService.GetAll());
+                return Ok(orders);
             }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while getting orders", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return NoContent();
         }
 
         /// <summary>
@@ -53,59 +59,38 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         // GET api/orders
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            try
-            {
-                var order = await _iOrderService.GetById(id);
-                if (order == null)
-                {
-                    _iLogger.LogInformation($"Order with {id} wasn't found");
-                    return NotFound();
-                }
-                return Ok(order);
-            }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while getting order with id {id}", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
+            var order = await _iOrderService.GetByIdAsync(id);
+            if (order == null)
+            {
+                _iLogger.LogInformation($"Order with {id} wasn't found");
+                return NotFound();
+            }
+            return Ok(order);
         }
 
         /// <summary>
         /// Add a new order.
         /// </summary>
         // POST api/orders
-        [HttpPost(Name = "AddOrder")]
+        [HttpPost]
+        [ValidateModelSate]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Post([FromBody]OrderModel orderModel)
         {
-            try
-            {
-                if (orderModel == null)
-                {
-                    return BadRequest();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
+            var createdOrder = await _iOrderService.AddAsync(orderModel);
 
-                await _iOrderService.Insert(orderModel);
-
-                return CreatedAtRoute("AddOrder", orderModel);
-            }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while adding a new order", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+            return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder.Id);
         }
 
         /// <summary>
@@ -113,73 +98,52 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         /// </summary>
         // PUT api/orders/386a8d02-c13a-4f98-8edd-27ece9ee0472
         [HttpPut("{id}")]
+        [ValidateModelSate]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Put(Guid id, [FromBody]OrderModel orderModel)
         {
-            try
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            if (!(await OrderExists(id)))
             {
-                if (orderModel == null)
-                {
-                    return BadRequest();
-                }
-
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
-
-                var order = await _iOrderService.GetById(id);
-                if (order != null)
-                {
-                    return NotFound();
-                }
-
-                await _iOrderService.Update(order);
-
-                return NoContent();
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                _iLogger.LogCritical($"Exception while puting an order", ex);
-                return StatusCode(500, "A problem happened while handling your request");
-            }
+
+            _iOrderService.Update(orderModel);
+
+            return NoContent();
         }
-        
+
         /// <summary>
         /// Delete order by id.
         /// </summary>
         // DELETE api/orders/386a8d02-c13a-4f98-8edd-27ece9ee0472
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            try
-            {
-                var order = await _iOrderService.GetById(id);
-                if (order != null)
-                {
-                    return NotFound();
-                }
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
 
-                await _iOrderService.Delete(order);
-
-                return NoContent();
-            }
-            catch (Exception ex)
+            if (!(await OrderExists(id)))
             {
-                _iLogger.LogCritical($"Exception while deleting an order", ex);
-                return StatusCode(500, "A problem happened while handling your request");
+                return NotFound();
             }
+
+            _iOrderService.DeleteById(id);
+
+            return NoContent();
         }
 
-        private bool OrderExists(Guid id)
+        private async Task<bool> OrderExists(Guid id)
         {
-            return _iOrderService.GetAll().Any(a => a.Id.Equals(id));
+            return (await _iOrderService.GetAllAsync()).Any(a => a.Id.Equals(id));
         }
+        #endregion
     }
 }

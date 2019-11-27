@@ -7,7 +7,7 @@ using ASPNetCore.CleanArchitecture.Models;
 
 namespace ASPNetCore.CleanArchitecture.Interfaces.IRepositories
 {
-    public interface ICustomerRepository : IGenericRepository<CustomerModel>
+    public interface ICustomerRepository : IBaseRepository<CustomerModel>, IInjectable
     {
     }
 }

@@ -4,46 +4,38 @@
 /// Copyright © Mohamed Ali NOUIRA. All rights reserved.
 
 using System;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
 using ASPNetCore.CleanArchitecture.Data.Database;
 using ASPNetCore.CleanArchitecture.Domain.Services;
 using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 using ASPNetCore.CleanArchitecture.Interfaces.IRepositories;
 using ASPNetCore.CleanArchitecture.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ASPNetCore.CleanArchitecture.Setup
 {
     public static class StartupExtension
     {
-        public static IServiceCollection AddDependencies(this IServiceCollection _iServiceCollection)
+        #region Methods
+        public static IServiceCollection AddAppDependencies(this IServiceCollection _iServiceCollection)
         {
             #region Data
             _iServiceCollection.AddDbContext<BaseDbContext, FakeDbContext>(opt => opt.UseInMemoryDatabase(Guid.NewGuid().ToString()));
             #endregion
 
-            #region Services
-            _iServiceCollection.AddTransient<IOrderService, OrderService>();
-            _iServiceCollection.AddTransient<IProductService, ProductService>();
-            _iServiceCollection.AddTransient<ICustomerService, CustomerService>();
-            #endregion
-
-            #region AutoMapper
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfiles("ASPNetCore.CleanArchitecture" + ".Api", "ASPNetCore.CleanArchitecture" + ".Infrastructure");
-            });
+            #region Services       
+            _iServiceCollection.AddIInjectableDependencies(typeof(OrderService));
+            _iServiceCollection.AddTransient(typeof(IBaseService<>), typeof(BaseService<>));
             #endregion
 
             #region Repositories
-            _iServiceCollection.AddTransient<IOrderRepository, OrderRepository>();
-            _iServiceCollection.AddTransient<IProductRepository, ProductRepository>();
-            _iServiceCollection.AddTransient<ICustomerRepository, CustomerRepository>();
+            _iServiceCollection.AddIInjectableDependencies(typeof(OrderRepository));
+            _iServiceCollection.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            _iServiceCollection.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             #endregion
 
             return _iServiceCollection;
         }
+        #endregion
     }
 }

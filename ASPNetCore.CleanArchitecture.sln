@@ -1,21 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Api", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Api\ASPNetCore.CleanArchitecture.Api.csproj", "{2CFBAA43-55A5-4C95-86D6-675B7B3BA8CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Api", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Api\ASPNetCore.CleanArchitecture.Api.csproj", "{2CFBAA43-55A5-4C95-86D6-675B7B3BA8CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Data", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Data\ASPNetCore.CleanArchitecture.Data.csproj", "{FCB037C3-6B4D-42DC-9A6E-5282636C74C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Data", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Data\ASPNetCore.CleanArchitecture.Data.csproj", "{FCB037C3-6B4D-42DC-9A6E-5282636C74C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Domain", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Domain\ASPNetCore.CleanArchitecture.Domain.csproj", "{DABFE91B-DBBB-45A6-A96D-3537F2F3E396}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Domain", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Domain\ASPNetCore.CleanArchitecture.Domain.csproj", "{DABFE91B-DBBB-45A6-A96D-3537F2F3E396}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Infrastructure", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Infrastructure\ASPNetCore.CleanArchitecture.Infrastructure.csproj", "{2608B6F4-177B-47E4-83E7-70BDCD1C39C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Infrastructure", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Infrastructure\ASPNetCore.CleanArchitecture.Infrastructure.csproj", "{2608B6F4-177B-47E4-83E7-70BDCD1C39C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Interfaces", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Interfaces\ASPNetCore.CleanArchitecture.Interfaces.csproj", "{29E413B8-9F03-4E77-91E9-412BB6E96FBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Interfaces", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Interfaces\ASPNetCore.CleanArchitecture.Interfaces.csproj", "{29E413B8-9F03-4E77-91E9-412BB6E96FBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Models", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Models\ASPNetCore.CleanArchitecture.Models.csproj", "{7C3A1950-C8AD-47D2-AE68-183979DA0B94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Models", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Models\ASPNetCore.CleanArchitecture.Models.csproj", "{7C3A1950-C8AD-47D2-AE68-183979DA0B94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Setup", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Setup\ASPNetCore.CleanArchitecture.Setup.csproj", "{E35B12F7-4C6F-4F3D-B319-C5D9CC58A628}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore.CleanArchitecture.Setup", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Setup\ASPNetCore.CleanArchitecture.Setup.csproj", "{E35B12F7-4C6F-4F3D-B319-C5D9CC58A628}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Resources", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Resources\ASPNetCore.CleanArchitecture.Resources.csproj", "{58BF689C-5482-4917-969B-3FE8FA4A9EA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Patterns", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Patterns\ASPNetCore.CleanArchitecture.Patterns.csproj", "{C5426784-2EED-4F98-92C3-10B5753A843A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNetCore.CleanArchitecture.Exceptions", "ASPNetCore.CleanArchitecture\ASPNetCore.CleanArchitecture.Exceptions\ASPNetCore.CleanArchitecture.Exceptions.csproj", "{7D8DA1D0-85B8-4DB8-9025-881BCD8ECBC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +57,18 @@ Global
 		{E35B12F7-4C6F-4F3D-B319-C5D9CC58A628}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E35B12F7-4C6F-4F3D-B319-C5D9CC58A628}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E35B12F7-4C6F-4F3D-B319-C5D9CC58A628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58BF689C-5482-4917-969B-3FE8FA4A9EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58BF689C-5482-4917-969B-3FE8FA4A9EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58BF689C-5482-4917-969B-3FE8FA4A9EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58BF689C-5482-4917-969B-3FE8FA4A9EA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5426784-2EED-4F98-92C3-10B5753A843A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5426784-2EED-4F98-92C3-10B5753A843A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5426784-2EED-4F98-92C3-10B5753A843A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5426784-2EED-4F98-92C3-10B5753A843A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D8DA1D0-85B8-4DB8-9025-881BCD8ECBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D8DA1D0-85B8-4DB8-9025-881BCD8ECBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D8DA1D0-85B8-4DB8-9025-881BCD8ECBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D8DA1D0-85B8-4DB8-9025-881BCD8ECBC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
