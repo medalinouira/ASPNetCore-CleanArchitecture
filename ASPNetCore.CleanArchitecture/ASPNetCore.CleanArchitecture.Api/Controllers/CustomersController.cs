@@ -15,7 +15,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ASPNetCore.CleanArchitecture.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("2.0")]
+    [ApiVersion("3.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class CustomersController : Controller
     {
         #region Fields
@@ -33,6 +35,8 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         #endregion
 
         #region Actions
+
+        #region CRUD
         /// <summary>
         /// Get all customers.
         /// </summary>
@@ -145,6 +149,11 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         {
             return (await _iCustomerService.GetAllAsync()).Any(a => a.Id.Equals(id));
         }
+        #endregion
+
+        #region GLOBAL
+        #endregion
+
         #endregion
     }
 }

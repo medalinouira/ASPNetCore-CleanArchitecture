@@ -12,10 +12,13 @@ using ASPNetCore.CleanArchitecture.Interfaces.IServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ASPNetCore.CleanArchitecture.Api.Controllers.QueriesParams;
 
-namespace Swagger.ASPNetCore.CleanArchitecture.Api.Controllers
+namespace ASPNetCore.CleanArchitecture.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("2.0")]
+    [ApiVersion("3.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class ProductsController : Controller
     {
         #region Fields
@@ -33,6 +36,8 @@ namespace Swagger.ASPNetCore.CleanArchitecture.Api.Controllers
         #endregion
 
         #region Actions
+        
+        #region CRUD
         /// <summary>
         /// Get all products.
         /// </summary>
@@ -145,6 +150,27 @@ namespace Swagger.ASPNetCore.CleanArchitecture.Api.Controllers
         {
             return (await _iProductService.GetAllAsync()).Any(a => a.Id.Equals(id));
         }
+        #endregion
+
+        #region GLOBAL
+        /// <summary>
+        /// Get all products by filter.
+        /// </summary>
+        // GET: api/products/filter?Page=5&PageSize=10&Term=hey&SearchBy=Name&SortBy=Name&SortOrder=Ascending
+        [HttpGet("filter")]
+        [MapToApiVersion("3.0")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public IActionResult GetByFilter(IProductQueryParams _iProductQueryParams)
+        {
+            _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
+
+            return NoContent();
+        }
+        #endregion
+
         #endregion
     }
 }

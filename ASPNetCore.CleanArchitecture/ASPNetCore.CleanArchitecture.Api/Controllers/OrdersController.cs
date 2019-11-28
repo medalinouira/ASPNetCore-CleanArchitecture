@@ -15,7 +15,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ASPNetCore.CleanArchitecture.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("2.0")]
+    [ApiVersion("3.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class OrdersController : Controller
     {
         #region Fields
@@ -33,6 +35,8 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         #endregion
 
         #region Actions
+        
+        #region CRUD
         /// <summary>
         /// Get all orders.
         /// </summary>
@@ -87,7 +91,7 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         public async Task<IActionResult> Post([FromBody]OrderModel orderModel)
         {
             _iLogger.LogInformation($"Controller : {this.GetControllerName()} , Action {this.GetActionName()} : => Visited at {DateTime.UtcNow.ToLongTimeString()}");
-
+            
             var createdOrder = await _iOrderService.AddAsync(orderModel);
 
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder.Id);
@@ -116,7 +120,7 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
 
             return NoContent();
         }
-
+        
         /// <summary>
         /// Delete order by id.
         /// </summary>
@@ -144,6 +148,11 @@ namespace ASPNetCore.CleanArchitecture.Api.Controllers
         {
             return (await _iOrderService.GetAllAsync()).Any(a => a.Id.Equals(id));
         }
+        #endregion
+
+        #region GLOBAL
+        #endregion
+
         #endregion
     }
 }

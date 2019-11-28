@@ -7,6 +7,7 @@ using ASPNetCore.CleanArchitecture.Setup;
 using AutoMapper;
 using ASPNetCore.CleanArchitecture.Api.Extensions;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,7 +35,7 @@ namespace ASPNetCore.CleanArchitecture.Api
 
             var configuration = new MapperConfiguration(cfg =>
                 cfg.AddMaps(new[] {
-                    "ASPNetCore.CleanArchitecture.API",
+                    "ASPNetCore.CleanArchitecture.Api",
                     "ASPNetCore.CleanArchitecture.Infrastructure"
                 })
             );
@@ -43,13 +44,18 @@ namespace ASPNetCore.CleanArchitecture.Api
 
             services.AddAppMVC();
             services.AddAppLogging();
+            services.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+            });
             services.AddAppSwaggerGen();
             services.AddAppDependencies();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        {            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -61,7 +67,7 @@ namespace ASPNetCore.CleanArchitecture.Api
 
             app.UseAppExceptionsMiddleware();
             app.UseRequestLocalization(BuildLocalizationOptions());
-
+            
             app.UseAppSwagger();
             app.UseStaticFiles();
             app.UseStatusCodePages();

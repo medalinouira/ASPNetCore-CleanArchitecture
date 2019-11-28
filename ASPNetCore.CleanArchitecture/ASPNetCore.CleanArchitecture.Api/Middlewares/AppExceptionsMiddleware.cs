@@ -20,7 +20,7 @@ namespace ASPNetCore.CleanArchitecture.Api.Middlewares
 
         private readonly string _contentType = "application/json";
 
-        private readonly ILogger<AppExceptionsMiddleware> _iLogger;
+        private readonly ILogger<AppExceptionsMiddleware> _iLogger;    
         private readonly IStringLocalizer<AppResources> _iStringLocalizer;
         #endregion
 
@@ -66,7 +66,7 @@ namespace ASPNetCore.CleanArchitecture.Api.Middlewares
             var parseSucceded = int.TryParse(ex.Message, out int code);
             int exCode = parseSucceded ? code : (int)ExceptionsCodes.UnknownCodeException;
             var exDetails = new ExceptionDetails
-            {
+            {                
                 Code = exCode,
                 Message = _iStringLocalizer["RSX_EXCEPTION_" + exCode.ToString()]
             };

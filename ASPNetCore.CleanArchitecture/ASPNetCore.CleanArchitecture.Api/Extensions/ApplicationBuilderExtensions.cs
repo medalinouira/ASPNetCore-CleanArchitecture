@@ -32,7 +32,8 @@ namespace ASPNetCore.CleanArchitecture.Api.Extensions
                 c.DefaultModelsExpandDepth(-1);
                 c.DocExpansion(DocExpansion.None);
                 c.DefaultModelRendering(ModelRendering.Model);
-                c.SwaggerEndpoint("/swagger/V2.0.0/swagger.json", "ASP.NET Core API Template V2.0.0");
+                c.SwaggerEndpoint($"/swagger/v2.0/swagger.json", "Version 2.0");
+                c.SwaggerEndpoint($"/swagger/v3.0/swagger.json", "Version 3.0 - beta");
             });
 
             return _iApplicationBuilder;
@@ -41,7 +42,7 @@ namespace ASPNetCore.CleanArchitecture.Api.Extensions
         {
             _iApplicationBuilder.UseMiddleware<AppExceptionsMiddleware>();
             return _iApplicationBuilder;
-        }
+        }        
         #endregion
     }
 }
